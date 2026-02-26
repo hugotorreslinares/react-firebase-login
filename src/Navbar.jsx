@@ -1,15 +1,7 @@
 import { Link } from 'react-router-dom';
-import { logOut, signInWithGoogle } from './firebase';
+import { logOut } from './firebase';
 
 function Navbar({ user }) {
-  const handleLogin = async () => {
-    try {
-      await signInWithGoogle();
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-  };
-
   const handleLogout = async () => {
     try {
       await logOut();
@@ -44,12 +36,12 @@ function Navbar({ user }) {
               Logout
             </button>
           ) : (
-            <button 
-              onClick={handleLogin}
+            <Link 
+              to="/login"
               className="text-sm bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
             >
               Login
-            </button>
+            </Link>
           )}
         </div>
       </div>

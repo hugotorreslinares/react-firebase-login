@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth, signInWithGoogle, logOut } from './firebase';
+import { auth } from './firebase';
 import Navbar from './Navbar';
 import Home from './Home';
+import LoginPage from './LoginPage';
 import Dashboard from './Dashboard';
 
 function ProtectedRoute({ user, children }) {
   if (!user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
   return children;
 }
@@ -38,6 +39,10 @@ function AppContent() {
       <Navbar user={user} />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route 
+          path="/login" 
+          element={user ? <Navigate to="/dashboard" replace /> : <LoginPage onLogin={setUser} />} 
+        />
         <Route 
           path="/dashboard" 
           element={
