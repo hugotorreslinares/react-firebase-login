@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getLoginHistory } from './firebase';
+import { Timestamp } from 'firebase/firestore';
 
 function Dashboard({ user }) {
   const [loginHistory, setLoginHistory] = useState([]);
@@ -70,7 +71,9 @@ function Dashboard({ user }) {
                       <td className="py-3 px-4 text-sm text-gray-600">{index + 1}</td>
                       <td className="py-3 px-4 text-sm text-gray-600">
                         {entry.timestamp
-                          ? new Date(entry.timestamp.seconds * 1000).toLocaleString()
+                          ? (entry.timestamp instanceof Timestamp 
+                              ? entry.timestamp.toDate().toLocaleString()
+                              : new Date(entry.timestamp.seconds * 1000).toLocaleString())
                           : '—'}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">{entry.email || '—'}</td>
