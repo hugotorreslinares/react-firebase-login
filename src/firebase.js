@@ -11,6 +11,7 @@ import {
   isSignInWithEmailLink,
   fetchSignInMethodsForEmail
 } from "firebase/auth";
+import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -23,6 +24,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
@@ -37,10 +39,8 @@ export const sendEmailLink = async (email) => {
     url: `https://google-login-app-beta.vercel.app/login?email=${encodeURIComponent(email)}`,
     handleCodeInApp: true,
   };
-  console.log('Sending email link to:', email);
   await sendSignInLinkToEmail(auth, email, actionCodeSettings);
   localStorage.setItem('emailForSignIn', email);
-  console.log('Email link sent successfully');
 };
 
 export const signInWithLink = (email, link) => 
@@ -53,3 +53,29 @@ export const isEmailLinkSignIn = (link) =>
   isSignInWithEmailLink(link);
 
 export const getStoredEmail = () => localStorage.getItem('emailForSignIn');
+
+export const logLogin = async (user) => {
+  try {
+    await addDoc(collection(db, 'loginHistory'), {
+      uid: user.uid,
+      email: user.email || null,
+      displayName: user.displayName || null,
+      timestamp: serverTimestamp(),
+    });
+  } catch (err) {
+    console.error('Error logging login:', err);
+  }
+};
+
+export const getLoginHistory = async (uid) => {
+  const q = query(
+    collection(db, 'loginHistory'),
+    where('uid', '==', uid),
+    orderBy('timestamp', 'desc')
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+};

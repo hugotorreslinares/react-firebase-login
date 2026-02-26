@@ -7,7 +7,9 @@ import {
   sendEmailLink,
   signInWithLink,
   isEmailLinkSignIn,
-  getStoredEmail
+  getStoredEmail,
+  logLogin,
+  auth
 } from './firebase';
 
 function LoginPage({ onLogin }) {
@@ -54,6 +56,7 @@ function LoginPage({ onLogin }) {
           console.log('Full link:', fullLink);
           const result = await signInWithLink(email, fullLink);
           console.log('Sign in successful:', result.user);
+          await logLogin(result.user);
           onLogin(result.user);
           localStorage.removeItem('emailForSignIn');
         } catch (err) {
@@ -75,6 +78,7 @@ function LoginPage({ onLogin }) {
     setError('');
     try {
       const result = await signInWithLink(email, link);
+      await logLogin(result.user);
       onLogin(result.user);
       localStorage.removeItem('emailForSignIn');
     } catch (err) {
@@ -90,6 +94,7 @@ function LoginPage({ onLogin }) {
       setError('');
       setLoading(true);
       const result = await signInWithGoogle();
+      await logLogin(result.user);
       onLogin(result.user);
     } catch (err) {
       setError('Error al iniciar sesión con Google');
@@ -99,7 +104,7 @@ function LoginPage({ onLogin }) {
     }
   };
 
-  const handleEmailAuth = async (e) => {
+  const handleEmailAuth = (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -112,9 +117,11 @@ function LoginPage({ onLogin }) {
         setEmailSent(true);
       } else if (isRegister) {
         const result = await registerWithEmail(email, password);
+        await logLogin(result.user);
         onLogin(result.user);
       } else {
         const result = await loginWithEmail(email, password);
+        await logLogin(result.user);
         onLogin(result.user);
       }
     } catch (err) {
@@ -161,8 +168,8 @@ function LoginPage({ onLogin }) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-sm p-8 bg-white rounded-2xl shadow-sm">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="w-full max-w-sm p-8 bg-white rounded-2xl shadow-sm">
         <h1 className="text-2xl font-light text-gray-900 text-center mb-2">
           {usePasswordless ? 'Iniciar sesión' : (isRegister ? 'Crear cuenta' : 'Iniciar sesión')}
         </h1>
@@ -177,38 +184,38 @@ function LoginPage({ onLogin }) {
         )}
 
         <form onSubmit={handleEmailAuth} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Correo electrónico"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400"
-            required
-          />
-          
-          {!usePasswordless && (
             <input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              type="email"
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400"
-              required={!usePasswordless}
-              minLength={6}
+              required
             />
-          )}
-          
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Cargando...' : (usePasswordless ? 'Enviar enlace' : (isRegister ? 'Registrarse' : 'Iniciar sesión'))}
-          </button>
-        </form>
+            
+            {!usePasswordless && (
+              <input
+                type="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400"
+                required={!usePasswordless}
+                minLength={6}
+              />
+            )}
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Cargando...' : (usePasswordless ? 'Enviar enlace' : (isRegister ? 'Registrarse' : 'Iniciar sesión'))}
+            </button>
+          </form>
 
         {!isRegister && (
-          <div className="mt-3 text-right">
+          <div className="mt-3 text-center">
             <button
               onClick={() => {
                 setUsePasswordless(!usePasswordless);
@@ -257,8 +264,8 @@ function LoginPage({ onLogin }) {
             </button>
           </p>
         )}
+        </div>
       </div>
-    </div>
   );
 }
 
