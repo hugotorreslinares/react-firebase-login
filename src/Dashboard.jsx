@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { getLoginHistory } from './firebase';
-import { Timestamp } from 'firebase/firestore';
+import { getLoginHistory, getIdeas, addIdea } from './firebase';
 
 function Dashboard({ user }) {
   const [loginHistory, setLoginHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [ideas, setIdeas] = useState([]);
+  const [loadingIdeas, setLoadingIdeas] = useState(true);
   const [error, setError] = useState(null);
+  const [titulo, setTitulo] = useState('');
+  const [idea, setIdea] = useState('');
+  const [savingIdea, setSavingIdea] = useState(false);
   const fetched = useRef(false);
 
   useEffect(() => {
@@ -24,8 +28,39 @@ function Dashboard({ user }) {
         setLoadingHistory(false);
       }
     };
+    
+    const fetchIdeas = async () => {
+      try {
+        const ideasData = await getIdeas();
+        setIdeas(ideasData);
+      } catch (err) {
+        console.error('Error fetching ideas:', err);
+      } finally {
+        setLoadingIdeas(false);
+      }
+    };
+    
     fetchHistory();
+    fetchIdeas();
   }, [user.uid]);
+
+  const handleAddIdea = async (e) => {
+    e.preventDefault();
+    if (!titulo.trim() || !idea.trim()) return;
+    
+    setSavingIdea(true);
+    try {
+      await addIdea(titulo, idea);
+      const ideasData = await getIdeas();
+      setIdeas(ideasData);
+      setTitulo('');
+      setIdea('');
+    } catch (err) {
+      console.error('Error adding idea:', err);
+    } finally {
+      setSavingIdea(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12">
@@ -94,6 +129,51 @@ function Dashboard({ user }) {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white rounded-2xl p-8 shadow-sm mt-8">
+          <h2 className="text-xl font-medium text-gray-900 mb-4">Mis Ideas</h2>
+          
+          <form onSubmit={handleAddIdea} className="mb-6 space-y-4">
+            <input
+              type="text"
+              placeholder="Título"
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400"
+              required
+            />
+            <textarea
+              placeholder="Idea"
+              value={idea}
+              onChange={(e) => setIdea(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400"
+              rows="3"
+              required
+            />
+            <button
+              type="submit"
+              disabled={savingIdea}
+              className="w-full py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+            >
+              {savingIdea ? 'Guardando...' : 'Guardar Idea'}
+            </button>
+          </form>
+
+          {loadingIdeas ? (
+            <p className="text-gray-500">Cargando...</p>
+          ) : ideas.length === 0 ? (
+            <p className="text-gray-500">No hay ideas aún.</p>
+          ) : (
+            <div className="space-y-4">
+              {ideas.map((item) => (
+                <div key={item.id} className="border border-gray-200 rounded-lg p-4">
+                  <h3 className="font-medium text-gray-900">{item.titulo}</h3>
+                  <p className="text-gray-600 mt-1">{item.idea}</p>
+                </div>
+              ))}
             </div>
           )}
         </div>

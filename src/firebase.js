@@ -91,3 +91,29 @@ export const getLoginHistory = async (uid) => {
     return [];
   }
 };
+
+export const addIdea = async (titulo, idea) => {
+  try {
+    await addDoc(collection(db, 'ideas'), {
+      titulo,
+      idea,
+      createdAt: new Date(),
+    });
+  } catch (err) {
+    console.error('Error adding idea:', err);
+    throw err;
+  }
+};
+
+export const getIdeas = async () => {
+  try {
+    const snapshot = await getDocs(collection(db, 'ideas'));
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (err) {
+    console.error('Error fetching ideas:', err);
+    return [];
+  }
+};
