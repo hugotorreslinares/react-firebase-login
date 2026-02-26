@@ -4,14 +4,17 @@ import { getLoginHistory } from './firebase';
 function Dashboard({ user }) {
   const [loginHistory, setLoginHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
+        setError(null);
         const history = await getLoginHistory(user.uid);
         setLoginHistory(history);
       } catch (err) {
         console.error('Error fetching login history:', err);
+        setError(err.message);
       } finally {
         setLoadingHistory(false);
       }
@@ -42,6 +45,11 @@ function Dashboard({ user }) {
 
         <div className="bg-white rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-medium text-gray-900 mb-4">Historial de inicios de sesión</h2>
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg">
+              Error: {error}
+            </div>
+          )}
           {loadingHistory ? (
             <p className="text-gray-500">Cargando...</p>
           ) : loginHistory.length === 0 ? (
