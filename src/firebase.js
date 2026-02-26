@@ -10,7 +10,7 @@ import {
   signInWithEmailLink,
   isSignInWithEmailLink
 } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY?.trim(),
@@ -65,9 +65,7 @@ export const addIdea = async (titulo, idea, isPublic, user) => {
 export const getIdeas = async () => {
   try {
     const snapshot = await getDocs(collection(db, 'ideas'));
-    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    console.log('Ideas loaded:', data.length);
-    return data;
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (err) {
     console.error('Error getting ideas:', err);
     return [];
@@ -78,12 +76,23 @@ export const getPublicIdeas = async () => {
   try {
     const snapshot = await getDocs(collection(db, 'ideas'));
     const allIdeas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    console.log('All ideas:', allIdeas);
-    const data = allIdeas.filter(doc => doc.public === true);
-    console.log('Public ideas loaded:', data.length);
-    return data;
+    return allIdeas
+      .filter(doc => doc.public === true)
+      .sort((a, b) => b.timestamp - a.timestamp);
   } catch (err) {
     console.error('Error getting public ideas:', err);
     return [];
   }
+};
+
+export const updateIdea = async (id, titulo, idea, isPublic) => {
+  await updateDoc(doc(db, 'ideas', id), {
+    titulo,
+    idea,
+    public: isPublic
+  });
+};
+
+export const deleteIdea = async (id) => {
+  await deleteDoc(doc(db, 'ideas', id));
 };

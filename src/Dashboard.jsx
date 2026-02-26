@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getIdeas, addIdea } from './firebase';
+import { getIdeas, addIdea, updateIdea, deleteIdea } from './firebase';
 
 function Dashboard({ user }) {
   const [ideas, setIdeas] = useState([]);
@@ -8,38 +8,63 @@ function Dashboard({ user }) {
   const [idea, setIdea] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [savingIdea, setSavingIdea] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+
+  const fetchIdeas = async () => {
+    const ideasData = await getIdeas();
+    setIdeas(ideasData.sort((a, b) => b.timestamp - a.timestamp));
+    setLoadingIdeas(false);
+  };
 
   useEffect(() => {
-    const fetchIdeas = async () => {
-      try {
-        const ideasData = await getIdeas();
-        setIdeas(ideasData);
-      } catch (err) {
-        console.error('Error:', err);
-      } finally {
-        setLoadingIdeas(false);
-      }
-    };
     fetchIdeas();
   }, []);
 
-  const handleAddIdea = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!titulo.trim() || !idea.trim()) return;
     
     setSavingIdea(true);
     try {
-      await addIdea(titulo, idea, isPublic, user);
-      const ideasData = await getIdeas();
-      setIdeas(ideasData);
+      if (editingId) {
+        await updateIdea(editingId, titulo, idea, isPublic);
+        setEditingId(null);
+      } else {
+        await addIdea(titulo, idea, isPublic, user);
+      }
       setTitulo('');
       setIdea('');
       setIsPublic(true);
+      await fetchIdeas();
     } catch (err) {
-      console.error('Error adding idea:', err);
+      console.error('Error:', err);
     } finally {
       setSavingIdea(false);
     }
+  };
+
+  const handleEdit = (item) => {
+    setTitulo(item.titulo);
+    setIdea(item.idea);
+    setIsPublic(item.public || false);
+    setEditingId(item.id);
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('¿Estás seguro de eliminar esta idea?')) return;
+    try {
+      await deleteIdea(id);
+      await fetchIdeas();
+    } catch (err) {
+      console.error('Error deleting:', err);
+    }
+  };
+
+  const handleCancel = () => {
+    setTitulo('');
+    setIdea('');
+    setIsPublic(true);
+    setEditingId(null);
   };
 
   return (
@@ -63,9 +88,11 @@ function Dashboard({ user }) {
         )}
 
         <div className="bg-white rounded-2xl p-8 shadow-sm">
-          <h2 className="text-xl font-medium text-gray-900 mb-4">Mis Ideas</h2>
+          <h2 className="text-xl font-medium text-gray-900 mb-4">
+            {editingId ? 'Editar Idea' : 'Nueva Idea'}
+          </h2>
           
-          <form onSubmit={handleAddIdea} className="mb-6 space-y-4">
+          <form onSubmit={handleSubmit} className="mb-6 space-y-4">
             <input
               type="text"
               placeholder="Título"
@@ -91,13 +118,24 @@ function Dashboard({ user }) {
               />
               Hacer esta idea pública
             </label>
-            <button
-              type="submit"
-              disabled={savingIdea}
-              className="w-full py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
-            >
-              {savingIdea ? 'Guardando...' : 'Guardar Idea'}
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={savingIdea}
+                className="flex-1 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+              >
+                {savingIdea ? 'Guardando...' : editingId ? 'Actualizar' : 'Guardar Idea'}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="py-3 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancelar
+                </button>
+              )}
+            </div>
           </form>
 
           {loadingIdeas ? (
@@ -108,8 +146,29 @@ function Dashboard({ user }) {
             <div className="space-y-4">
               {ideas.map((item) => (
                 <div key={item.id} className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="font-medium text-gray-900">{item.titulo}</h3>
-                  <p className="text-gray-600 mt-1">{item.idea}</p>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-900">{item.titulo}</h3>
+                      <p className="text-gray-600 mt-1">{item.idea}</p>
+                      <p className="text-xs text-gray-400 mt-2">
+                        {item.public ? '🌐 Pública' : '🔒 Privada'} • {new Date(item.timestamp).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 ml-4">
+                      <button
+                        onClick={() => handleEdit(item)}
+                        className="text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="text-red-600 hover:text-red-800 text-sm"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
