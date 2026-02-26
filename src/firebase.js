@@ -61,13 +61,27 @@ export const addIdea = async (titulo, idea, isPublic, user) => {
 };
 
 export const getIdeas = async () => {
-  const snapshot = await getDocs(collection(db, 'ideas'));
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  try {
+    const snapshot = await getDocs(collection(db, 'ideas'));
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    console.log('Ideas loaded:', data.length);
+    return data;
+  } catch (err) {
+    console.error('Error getting ideas:', err);
+    return [];
+  }
 };
 
 export const getPublicIdeas = async () => {
-  const snapshot = await getDocs(collection(db, 'ideas'));
-  return snapshot.docs
-    .map(doc => ({ id: doc.id, ...doc.data() }))
-    .filter(doc => doc.public === true);
+  try {
+    const snapshot = await getDocs(collection(db, 'ideas'));
+    const data = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(doc => doc.public === true);
+    console.log('Public ideas loaded:', data.length);
+    return data;
+  } catch (err) {
+    console.error('Error getting public ideas:', err);
+    return [];
+  }
 };
