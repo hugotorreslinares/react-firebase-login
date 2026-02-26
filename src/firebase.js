@@ -49,10 +49,13 @@ export const isEmailLinkSignIn = (link) =>
 
 export const getStoredEmail = () => localStorage.getItem('emailForSignIn');
 
-export const addIdea = async (titulo, idea) => {
+export const addIdea = async (titulo, idea, isPublic, user) => {
   await addDoc(collection(db, 'ideas'), {
     titulo,
     idea,
+    public: isPublic,
+    createdBy: user.email,
+    createdByName: user.displayName || user.email,
     timestamp: Date.now()
   });
 };
@@ -60,4 +63,11 @@ export const addIdea = async (titulo, idea) => {
 export const getIdeas = async () => {
   const snapshot = await getDocs(collection(db, 'ideas'));
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const getPublicIdeas = async () => {
+  const snapshot = await getDocs(collection(db, 'ideas'));
+  return snapshot.docs
+    .map(doc => ({ id: doc.id, ...doc.data() }))
+    .filter(doc => doc.public === true);
 };

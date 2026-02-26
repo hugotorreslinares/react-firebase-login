@@ -6,6 +6,7 @@ function Dashboard({ user }) {
   const [loadingIdeas, setLoadingIdeas] = useState(true);
   const [titulo, setTitulo] = useState('');
   const [idea, setIdea] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
   const [savingIdea, setSavingIdea] = useState(false);
 
   useEffect(() => {
@@ -28,11 +29,12 @@ function Dashboard({ user }) {
     
     setSavingIdea(true);
     try {
-      await addIdea(titulo, idea);
+      await addIdea(titulo, idea, isPublic, user);
       const ideasData = await getIdeas();
       setIdeas(ideasData);
       setTitulo('');
       setIdea('');
+      setIsPublic(true);
     } catch (err) {
       console.error('Error adding idea:', err);
     } finally {
@@ -80,6 +82,15 @@ function Dashboard({ user }) {
               rows="3"
               required
             />
+            <label className="flex items-center gap-2 text-gray-700">
+              <input
+                type="checkbox"
+                checked={isPublic}
+                onChange={(e) => setIsPublic(e.target.checked)}
+                className="w-4 h-4"
+              />
+              Hacer esta idea pública
+            </label>
             <button
               type="submit"
               disabled={savingIdea}
