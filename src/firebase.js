@@ -56,14 +56,17 @@ export const getStoredEmail = () => localStorage.getItem('emailForSignIn');
 
 export const logLogin = async (user) => {
   try {
-    await addDoc(collection(db, 'loginHistory'), {
+    console.log('Logging login for user:', user.uid, user.email);
+    const docRef = await addDoc(collection(db, 'loginHistory'), {
       uid: user.uid,
       email: user.email || null,
       displayName: user.displayName || null,
       timestamp: serverTimestamp(),
     });
+    console.log('Login logged with ID:', docRef.id);
   } catch (err) {
     console.error('Error logging login:', err);
+    alert('Error guardando login: ' + err.message);
   }
 };
 
