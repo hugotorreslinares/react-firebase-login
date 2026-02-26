@@ -75,9 +75,18 @@ function Dashboard({ user }) {
                       <td className="py-3 px-4 text-sm text-gray-600">{index + 1}</td>
                       <td className="py-3 px-4 text-sm text-gray-600">
                         {entry.timestamp
-                          ? (entry.timestamp instanceof Timestamp 
-                              ? entry.timestamp.toDate().toLocaleString()
-                              : new Date(entry.timestamp.seconds * 1000).toLocaleString())
+                          ? (() => {
+                              try {
+                                const date = entry.timestamp instanceof Date 
+                                  ? entry.timestamp 
+                                  : entry.timestamp.toDate 
+                                    ? entry.timestamp.toDate() 
+                                    : new Date(entry.timestamp);
+                                return isNaN(date.getTime()) ? '—' : date.toLocaleString();
+                              } catch {
+                                return '—';
+                              }
+                            })()
                           : '—'}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">{entry.email || '—'}</td>
