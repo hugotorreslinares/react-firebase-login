@@ -8,7 +8,6 @@ import {
   signInWithLink,
   isEmailLinkSignIn,
   getStoredEmail,
-  logLogin,
   auth
 } from './firebase';
 
@@ -56,7 +55,6 @@ function LoginPage({ onLogin }) {
           console.log('Full link:', fullLink);
           const result = await signInWithLink(email, fullLink);
           console.log('Sign in successful:', result.user);
-          await logLogin(result.user);
           onLogin(result.user);
           localStorage.removeItem('emailForSignIn');
         } catch (err) {
@@ -78,7 +76,6 @@ function LoginPage({ onLogin }) {
     setError('');
     try {
       const result = await signInWithLink(email, link);
-      await logLogin(result.user);
       onLogin(result.user);
       localStorage.removeItem('emailForSignIn');
     } catch (err) {
@@ -94,7 +91,6 @@ function LoginPage({ onLogin }) {
       setError('');
       setLoading(true);
       const result = await signInWithGoogle();
-      await logLogin(result.user);
       onLogin(result.user);
     } catch (err) {
       setError('Error al iniciar sesión con Google');
@@ -117,11 +113,9 @@ function LoginPage({ onLogin }) {
         setEmailSent(true);
       } else if (isRegister) {
         const result = await registerWithEmail(email, password);
-        await logLogin(result.user);
         onLogin(result.user);
       } else {
         const result = await loginWithEmail(email, password);
-        await logLogin(result.user);
         onLogin(result.user);
       }
     } catch (err) {
