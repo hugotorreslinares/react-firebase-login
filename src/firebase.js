@@ -49,23 +49,6 @@ export const isEmailLinkSignIn = (link) =>
 
 export const getStoredEmail = () => localStorage.getItem('emailForSignIn');
 
-export const logLogin = async (user) => {
-  await addDoc(collection(db, 'loginHistory'), {
-    uid: user.uid,
-    email: user.email,
-    displayName: user.displayName,
-    timestamp: Date.now()
-  });
-};
-
-export const getLoginHistory = async (uid) => {
-  const snapshot = await getDocs(collection(db, 'loginHistory'));
-  return snapshot.docs
-    .map(doc => ({ id: doc.id, ...doc.data() }))
-    .filter(doc => doc.uid === uid)
-    .sort((a, b) => b.timestamp - a.timestamp);
-};
-
 export const addIdea = async (titulo, idea) => {
   await addDoc(collection(db, 'ideas'), {
     titulo,

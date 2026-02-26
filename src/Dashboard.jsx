@@ -1,35 +1,26 @@
 import { useState, useEffect } from 'react';
-import { getLoginHistory, getIdeas, addIdea } from './firebase';
+import { getIdeas, addIdea } from './firebase';
 
 function Dashboard({ user }) {
-  const [loginHistory, setLoginHistory] = useState([]);
-  const [loadingHistory, setLoadingHistory] = useState(true);
   const [ideas, setIdeas] = useState([]);
   const [loadingIdeas, setLoadingIdeas] = useState(true);
-  const [error, setError] = useState(null);
   const [titulo, setTitulo] = useState('');
   const [idea, setIdea] = useState('');
   const [savingIdea, setSavingIdea] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchIdeas = async () => {
       try {
-        const [history, ideasData] = await Promise.all([
-          getLoginHistory(user.uid),
-          getIdeas()
-        ]);
-        setLoginHistory(history);
+        const ideasData = await getIdeas();
         setIdeas(ideasData);
       } catch (err) {
         console.error('Error:', err);
-        setError(err.message);
       } finally {
-        setLoadingHistory(false);
         setLoadingIdeas(false);
       }
     };
-    fetchData();
-  }, [user.uid]);
+    fetchIdeas();
+  }, []);
 
   const handleAddIdea = async (e) => {
     e.preventDefault();
@@ -59,57 +50,17 @@ function Dashboard({ user }) {
           Welcome back, {user.displayName || user.email}
         </p>
         
-        <div className="bg-white rounded-2xl p-8 shadow-sm inline-block mb-8">
-          {user.photoURL && (
+        {user.photoURL && (
+          <div className="mb-8">
             <img 
               src={user.photoURL} 
               alt="Profile" 
-              className="w-16 h-16 rounded-full mx-auto mb-4"
+              className="w-20 h-20 rounded-full mx-auto"
             />
-          )}
-          <p className="text-gray-900 font-medium">{user.email}</p>
-        </div>
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl p-8 shadow-sm">
-          <h2 className="text-xl font-medium text-gray-900 mb-4">Historial de inicios de sesión</h2>
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg">
-              Error: {error}
-            </div>
-          )}
-          {loadingHistory ? (
-            <p className="text-gray-500">Cargando...</p>
-          ) : loginHistory.length === 0 ? (
-            <p className="text-gray-500">No hay registros aún.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="py-3 px-4 text-sm font-medium text-gray-500">#</th>
-                    <th className="py-3 px-4 text-sm font-medium text-gray-500">Fecha y hora</th>
-                    <th className="py-3 px-4 text-sm font-medium text-gray-500">Correo</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loginHistory.map((entry, index) => (
-                    <tr key={entry.id} className="border-b border-gray-100">
-                      <td className="py-3 px-4 text-sm text-gray-600">{index + 1}</td>
-                      <td className="py-3 px-4 text-sm text-gray-600">
-                        {entry.timestamp
-                          ? new Date(entry.timestamp).toLocaleString()
-                          : '—'}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-600">{entry.email || '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        <div className="bg-white rounded-2xl p-8 shadow-sm mt-8">
           <h2 className="text-xl font-medium text-gray-900 mb-4">Mis Ideas</h2>
           
           <form onSubmit={handleAddIdea} className="mb-6 space-y-4">
