@@ -5,7 +5,10 @@ import {
   signInWithPopup, 
   signOut,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  sendSignInLinkToEmail,
+  signInWithEmailLink,
+  isSignInWithEmailLink
 } from "firebase/auth";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 
@@ -29,6 +32,22 @@ export const registerWithEmail = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);
 export const loginWithEmail = (email, password) => 
   signInWithEmailAndPassword(auth, email, password);
+
+export const sendEmailLink = async (email) => {
+  await sendSignInLinkToEmail(auth, email, {
+    url: `https://google-login-app-beta.vercel.app/login?email=${email}`,
+    handleCodeInApp: true,
+  });
+  localStorage.setItem('emailForSignIn', email);
+};
+
+export const signInWithLink = (email, link) => 
+  signInWithEmailLink(auth, email, link);
+
+export const isEmailLinkSignIn = (link) => 
+  isSignInWithEmailLink(link);
+
+export const getStoredEmail = () => localStorage.getItem('emailForSignIn');
 
 export const logLogin = async (user) => {
   await addDoc(collection(db, 'loginHistory'), {
