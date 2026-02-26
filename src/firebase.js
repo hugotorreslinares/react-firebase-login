@@ -75,9 +75,9 @@ export const getIdeas = async () => {
 export const getPublicIdeas = async () => {
   try {
     const snapshot = await getDocs(collection(db, 'ideas'));
-    const data = snapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(doc => doc.public === true);
+    const allIdeas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    console.log('All ideas:', allIdeas);
+    const data = allIdeas.filter(doc => doc.public === true);
     console.log('Public ideas loaded:', data.length);
     return data;
   } catch (err) {
