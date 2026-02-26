@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { getLoginHistory, getIdeas, addIdea } from './firebase';
 
 function Dashboard({ user }) {
@@ -10,38 +10,25 @@ function Dashboard({ user }) {
   const [titulo, setTitulo] = useState('');
   const [idea, setIdea] = useState('');
   const [savingIdea, setSavingIdea] = useState(false);
-  const fetched = useRef(false);
 
   useEffect(() => {
-    if (fetched.current) return;
-    fetched.current = true;
-    
-    const fetchHistory = async () => {
+    const fetchData = async () => {
       try {
-        setError(null);
-        const history = await getLoginHistory(user.uid);
+        const [history, ideasData] = await Promise.all([
+          getLoginHistory(user.uid),
+          getIdeas()
+        ]);
         setLoginHistory(history);
+        setIdeas(ideasData);
       } catch (err) {
-        console.error('Error fetching login history:', err);
+        console.error('Error:', err);
         setError(err.message);
       } finally {
         setLoadingHistory(false);
-      }
-    };
-    
-    const fetchIdeas = async () => {
-      try {
-        const ideasData = await getIdeas();
-        setIdeas(ideasData);
-      } catch (err) {
-        console.error('Error fetching ideas:', err);
-      } finally {
         setLoadingIdeas(false);
       }
     };
-    
-    fetchHistory();
-    fetchIdeas();
+    fetchData();
   }, [user.uid]);
 
   const handleAddIdea = async (e) => {
@@ -110,18 +97,7 @@ function Dashboard({ user }) {
                       <td className="py-3 px-4 text-sm text-gray-600">{index + 1}</td>
                       <td className="py-3 px-4 text-sm text-gray-600">
                         {entry.timestamp
-                          ? (() => {
-                              try {
-                                const date = entry.timestamp instanceof Date 
-                                  ? entry.timestamp 
-                                  : entry.timestamp.toDate 
-                                    ? entry.timestamp.toDate() 
-                                    : new Date(entry.timestamp);
-                                return isNaN(date.getTime()) ? '—' : date.toLocaleString();
-                              } catch {
-                                return '—';
-                              }
-                            })()
+                          ? new Date(entry.timestamp).toLocaleString()
                           : '—'}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">{entry.email || '—'}</td>

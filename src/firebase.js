@@ -5,13 +5,9 @@ import {
   signInWithPopup, 
   signOut,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendSignInLinkToEmail,
-  signInWithEmailLink,
-  isSignInWithEmailLink,
-  fetchSignInMethodsForEmail
+  signInWithEmailAndPassword
 } from "firebase/auth";
-import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -34,86 +30,32 @@ export const registerWithEmail = (email, password) =>
 export const loginWithEmail = (email, password) => 
   signInWithEmailAndPassword(auth, email, password);
 
-export const sendEmailLink = async (email) => {
-  const actionCodeSettings = {
-    url: `https://google-login-app-beta.vercel.app/login?email=${encodeURIComponent(email)}`,
-    handleCodeInApp: true,
-  };
-  await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-  localStorage.setItem('emailForSignIn', email);
-};
-
-export const signInWithLink = (email, link) => 
-  signInWithEmailLink(auth, email, link);
-
-export const checkSignInMethods = (email) => 
-  fetchSignInMethodsForEmail(auth, email);
-
-export const isEmailLinkSignIn = (link) => 
-  isSignInWithEmailLink(link);
-
-export const getStoredEmail = () => localStorage.getItem('emailForSignIn');
-
 export const logLogin = async (user) => {
-  try {
-    await addDoc(collection(db, 'loginHistory'), {
-      uid: user.uid,
-      email: user.email || null,
-      displayName: user.displayName || null,
-      timestamp: new Date(),
-    });
-  } catch (err) {
-    console.error('Error logging login:', err);
-  }
+  await addDoc(collection(db, 'loginHistory'), {
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName,
+    timestamp: Date.now()
+  });
 };
 
 export const getLoginHistory = async (uid) => {
-  try {
-    const q = query(
-      collection(db, 'loginHistory'),
-      where('uid', '==', uid)
-    );
-    const snapshot = await getDocs(q);
-    const docs = snapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        uid: data.uid,
-        email: data.email,
-        displayName: data.displayName,
-        timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : data.timestamp,
-      };
-    });
-    docs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    return docs;
-  } catch (err) {
-    console.error('Error fetching:', err);
-    return [];
-  }
+  const snapshot = await getDocs(collection(db, 'loginHistory'));
+  return snapshot.docs
+    .map(doc => ({ id: doc.id, ...doc.data() }))
+    .filter(doc => doc.uid === uid)
+    .sort((a, b) => b.timestamp - a.timestamp);
 };
 
 export const addIdea = async (titulo, idea) => {
-  try {
-    await addDoc(collection(db, 'ideas'), {
-      titulo,
-      idea,
-      createdAt: new Date(),
-    });
-  } catch (err) {
-    console.error('Error adding idea:', err);
-    throw err;
-  }
+  await addDoc(collection(db, 'ideas'), {
+    titulo,
+    idea,
+    timestamp: Date.now()
+  });
 };
 
 export const getIdeas = async () => {
-  try {
-    const snapshot = await getDocs(collection(db, 'ideas'));
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-  } catch (err) {
-    console.error('Error fetching ideas:', err);
-    return [];
-  }
+  const snapshot = await getDocs(collection(db, 'ideas'));
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
