@@ -104,7 +104,7 @@ function LoginPage({ onLogin }) {
     }
   };
 
-  const handleEmailAuth = (e) => {
+  const handleEmailAuth = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
