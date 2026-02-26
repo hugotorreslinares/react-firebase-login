@@ -56,36 +56,36 @@ export const getStoredEmail = () => localStorage.getItem('emailForSignIn');
 
 export const logLogin = async (user) => {
   try {
-    console.log('DB:', db);
-    console.log('User:', user.uid, user.email);
-    const loginData = {
+    await addDoc(collection(db, 'loginHistory'), {
       uid: user.uid,
       email: user.email || null,
       displayName: user.displayName || null,
       timestamp: new Date(),
-    };
-    console.log('Saving:', loginData);
-    const docRef = await addDoc(collection(db, 'loginHistory'), loginData);
-    console.log('Login logged with ID:', docRef.id);
+    });
   } catch (err) {
     console.error('Error logging login:', err);
-    alert('Error guardando login: ' + err.message);
   }
 };
 
 export const getLoginHistory = async (uid) => {
   try {
-    console.log('Fetching history for uid:', uid);
     const q = query(
       collection(db, 'loginHistory'),
       where('uid', '==', uid)
     );
     const snapshot = await getDocs(q);
-    console.log('Docs found:', snapshot.size);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const docs = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        uid: data.uid,
+        email: data.email,
+        displayName: data.displayName,
+        timestamp: data.timestamp?.toDate ? data.timestamp.toDate() : data.timestamp,
+      };
+    });
+    docs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    return docs;
   } catch (err) {
     console.error('Error fetching:', err);
     return [];

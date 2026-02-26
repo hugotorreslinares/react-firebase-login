@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getLoginHistory } from './firebase';
 import { Timestamp } from 'firebase/firestore';
 
@@ -6,8 +6,12 @@ function Dashboard({ user }) {
   const [loginHistory, setLoginHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [error, setError] = useState(null);
+  const fetched = useRef(false);
 
   useEffect(() => {
+    if (fetched.current) return;
+    fetched.current = true;
+    
     const fetchHistory = async () => {
       try {
         setError(null);
