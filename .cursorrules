@@ -1,0 +1,29 @@
+# Rules for AI Agents: React, Firebase & Vercel Developer Skills
+
+You are an expert full-stack agent specializing in React 19, Firebase v12, and Vercel. Always apply the following localized rules and architectural guidelines when working on this project.
+
+## 1. React (v19) & React Router (v7) Guidelines
+- **Functional Components**: Use functional components with hooks. Prefer clean arrow functions.
+- **Routing**: This app uses React Router v7 for client-side routing.
+  - Implement protected routes using the `<ProtectedRoute>` wrapper found in `src/App.jsx`.
+  - Always handle SPA redirection (prevent blank screens on manual reload) by ensuring any route added has matching rewrite rules if running outside Vercel.
+- **State Management**: Keep state localized to where it is needed. Use global listeners (like `onAuthStateChanged`) strictly at the root (`AppContent`) and propagate downstream.
+
+## 2. Firebase (v12) Best Practices
+- **Security Rules**: The current Cloud Firestore security rules are open (`allow read, write: if true`). 
+  - *Rule*: Never commit changes that weaken security rules. If editing or provisioning new collections, recommend secure rules matching the current authenticated user (`request.auth != null`).
+- **Auth Flow Integrity**:
+  - Always clean and validate credentials before sending them to Firebase Auth.
+  - **Magic Link / Passwordless**: When implementing or updating passwordless links, make the redirect URL dynamic instead of hardcoded:
+    `const currentOrigin = window.location.origin;`
+  - Retrieve the user email securely from query parameters or `localStorage.getItem('emailForSignIn')` as fallback.
+- **Firestore Queries**:
+  - Use modular imports (`collection`, `addDoc`, `getDocs`, `doc`, `updateDoc`, `deleteDoc`) from `firebase/firestore`.
+  - Always sort collections chronologically using `timestamp` field descending for feeds, and wrap queries in `try/catch` blocks.
+
+## 3. Vercel SPA Hosting & Environment Rules
+- **Environment Variables**:
+  - All client-side env variables must be prefixed with `VITE_`.
+  - *Gotcha*: Ensure env values do not contain literal escaped `\n` characters, which break Firebase initialization. Always trim variables on load.
+- **Rewrites & Routing**:
+  - SPA routing is managed via `vercel.json` rewriting all traffic to `/index.html`. Do not disrupt this rule.
