@@ -2,6 +2,11 @@
 
 Minimal React app with Firebase authentication and ideas sharing.
 
+> [!TIP]
+> **For AI Agents (Gemini, Claude, Copilot) & Developers:**
+> A comprehensive system design, authentication flow diagrams, and architectural gotchas are documented in the [CONTEXT.md](file:///Users/hugo.torres/google-login-app/CONTEXT.md) file. Please consult it first for code modifications.
+
+
 ## Features
 
 - **Google Sign-In** - Login with Google account
