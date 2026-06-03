@@ -12,6 +12,7 @@ function Dashboard({ user }) {
   const [savingIdea, setSavingIdea] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [images, setImages] = useState([]);
+  const [submitError, setSubmitError] = useState('');
   const [cardImageIndexes, setCardImageIndexes] = useState({});
 
   const fetchIdeas = useCallback(async () => {
@@ -37,7 +38,7 @@ function Dashboard({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!titulo.trim() || !idea.trim()) return;
-    
+    setSubmitError('');
     setSavingIdea(true);
     try {
       if (editingId) {
@@ -59,6 +60,7 @@ function Dashboard({ user }) {
       await fetchIdeas();
     } catch (err) {
       console.error('Error:', err);
+      setSubmitError(err.message || 'Error al guardar la idea con imágenes');
     } finally {
       setSavingIdea(false);
     }
@@ -129,6 +131,11 @@ function Dashboard({ user }) {
             {editingId ? 'Editar Idea' : 'Nueva Idea'}
           </h2>
           <form onSubmit={handleSubmit} className="mb-6 space-y-4">
+            {submitError && (
+              <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg p-3">
+                {submitError}
+              </div>
+            )}
             <input
               type="text"
               placeholder="Título"

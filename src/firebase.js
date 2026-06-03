@@ -92,7 +92,10 @@ const fileToBase64 = (file) => new Promise((resolve, reject) => {
 export const uploadIdeaImages = async (files, ideaId) => {
   if (!files || files.length === 0) return [];
   const apiKey = getImgbbApiKey();
-  if (!apiKey) throw new Error('ImageBB API key is not configured');
+  if (!apiKey) {
+    console.error('ImageBB API key missing:', import.meta.env.VITE_IMGBB_API_KEY);
+    throw new Error('ImageBB API key is not configured');
+  }
 
   const ideaRef = doc(db, 'ideas', ideaId);
   const ideaSnap = await getDoc(ideaRef);
@@ -111,13 +114,17 @@ export const uploadIdeaImages = async (files, ideaId) => {
       body: form,
     });
 
+    const data = await response.json().catch(() => null);
     if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      throw new Error(`ImageBB upload failed: ${response.status} ${response.statusText} ${errorData?.error?.message || ''}`);
+      throw new Error(`ImageBB upload failed: ${response.status} ${response.statusText} ${data?.error?.message || JSON.stringify(data)}`);
     }
 
-    const data = await response.json();
-    return data.data?.display_url || data.data?.url;
+    const url = data?.data?.display_url || data?.data?.url || data?.data?.image?.url;
+    if (!url) {
+      throw new Error(`ImageBB upload returned no image URL: ${JSON.stringify(data)}`);
+    }
+
+    return url;
   });
 
   const newImageUrls = await Promise.all(uploadPromises);
