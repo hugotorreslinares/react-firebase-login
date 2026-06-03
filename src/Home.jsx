@@ -32,8 +32,8 @@ function Home() {
         url="https://your-domain.com/"
       />
       <div className="min-h-screen  py-12 ">
-        <div className="max6xl mx-auto px-4">
-          <div className="bg-white   shadow-gray-100 mb-5 py-1 bordered">
+        <div className="max6xl mx-auto px-0">
+          <div className="bg-white   shadow-gray-100 mb-5 py-1 border-bottom">
             <div className="text-center mt-8 mb-8">
               <img
                 src={logo}
