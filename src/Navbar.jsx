@@ -31,7 +31,7 @@ function Navbar({ user }) {
 
         <div className="flex items-center gap-8">
           <Link to="/" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-            Home
+            Inicio
           </Link>
 
 
