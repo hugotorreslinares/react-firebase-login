@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { getIdeas, addIdea, updateIdea, deleteIdea } from './firebase';
+import { useState, useEffect, useCallback } from 'react';
+import { getUserIdeas, addIdea, updateIdea, deleteIdea } from './firebase';
 
 
 
@@ -12,15 +12,25 @@ function Dashboard({ user }) {
   const [savingIdea, setSavingIdea] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  const fetchIdeas = async () => {
-    const ideasData = await getIdeas();
-    setIdeas(ideasData.sort((a, b) => b.timestamp - a.timestamp));
-    setLoadingIdeas(false);
-  };
+  const fetchIdeas = useCallback(async () => {
+    if (!user) {
+      setIdeas([]);
+      setLoadingIdeas(false);
+      return;
+    }
+    try {
+      const ideasData = await getUserIdeas(user);
+      setIdeas(ideasData.sort((a, b) => b.timestamp - a.timestamp));
+    } catch (err) {
+      console.error('Error fetching ideas:', err);
+    } finally {
+      setLoadingIdeas(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     fetchIdeas();
-  }, []);
+  }, [fetchIdeas]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -169,6 +179,7 @@ function Dashboard({ user }) {
                       >
                         Eliminar
                       </button>
+                      
                     </div>
                   </div>
                 </div>

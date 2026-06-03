@@ -10,7 +10,7 @@ import {
   signInWithEmailLink,
   isSignInWithEmailLink
 } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, increment, runTransaction, arrayUnion, arrayRemove } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, increment, runTransaction, arrayUnion, arrayRemove, query, where, orderBy } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY?.trim(),
@@ -138,6 +138,18 @@ export const getIdeas = async () => {
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (err) {
     console.error('Error getting ideas:', err);
+    return [];
+  }
+};
+
+export const getUserIdeas = async (user) => {
+  if (!user) return [];
+  try {
+    const q = query(collection(db, 'ideas'), where('createdBy', '==', user.email));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (err) {
+    console.error('Error getting user ideas:', err);
     return [];
   }
 };
