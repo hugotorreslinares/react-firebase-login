@@ -103,16 +103,16 @@ function Dashboard({ user }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12">
-      <div className=" w-full max-w-6xl px-4 ">
+      <div className=" w-full max-w-6xl px-4 pb-8">
         <h1 className="text-4xl font-light text-gray-900 mb-2">
-          Dashboard
+          Mis Ideas
         </h1>
         <p className="text-gray-500 mb-8">
-          Welcome back, {user.displayName || user.email}
+          Bienvenido, {user.displayName || user.email}
         </p>
         
         {user.photoURL && (
-          <div className="mb-8 border-bottom" >
+          <div className="mb-8 pb-8border-bottom" >
             <img 
               src={user.photoURL} 
               alt="Profile" 
