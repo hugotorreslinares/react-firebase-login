@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getPublicIdeas } from './firebase';
+import { Link } from 'react-router-dom';
 import Idea from './components/Idea';
+import logo from './assets/logo.png';
 
 
 function Home() {
@@ -22,20 +24,38 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-light text-gray-900 mb-8 text-center mt-5">
-          Ideas Públicas
-        </h1>
-        
+    <div className="min-h-screen  py-12 ">
+      <div className="max6xl mx-auto px-4">
+        <div className="bg-white   shadow-gray-100 mb-5 py-1 bordered">
+          <div className="text-center mt-8 mb-8">
+            <img
+              src={logo}
+              alt="thinkup"
+              className="mx-auto h-24 w-24 rounded-full shadow-lg transition-transform duration-300 hover:-rotate-6"
+            />
+            <h1 className="mt-6">Una plataforma colaborativa de votación de ideas.</h1>
+            <p className="mt-3 text-gray-600">Descubre ideas públicas y comparte la tuya desde el dashboard.</p>
+          </div>
+
+          <div className="flex justify-center mb-8">
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center justify-center  bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+            >
+              Añadir nueva idea
+            </Link>
+          </div>
+        </div>
+
+
         {loading ? (
           <p className="text-center text-gray-500">Cargando...</p>
         ) : ideas.length === 0 ? (
           <p className="text-center text-gray-500">No hay ideas públicas aún.</p>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 text-left">
+          <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-1 text-left">
             {ideas.map((item) => (
-              <Idea idea={item} />
+              <Idea key={item.id} idea={item} truncatePreview />
             ))}
           </div>
         )}
