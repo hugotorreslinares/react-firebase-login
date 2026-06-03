@@ -10,6 +10,7 @@ import {
   getStoredEmail,
   auth
 } from './firebase';
+import Seo from './Seo';
 
 function LoginPage({ onLogin }) {
   const [searchParams] = useSearchParams();
@@ -142,7 +143,14 @@ function LoginPage({ onLogin }) {
 
   if (emailSent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <>
+        <Seo
+          title="ThinkUp - Verifica tu correo"
+          description="Se ha enviado el enlace de acceso a tu correo electrónico. Revisa tu bandeja de entrada para iniciar sesión en ThinkUp."
+          url="https://your-domain.com/login"
+          noIndex={true}
+        />
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="w-full max-w-sm p-8 bg-white rounded-2xl shadow-sm text-center">
           <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,11 +166,19 @@ function LoginPage({ onLogin }) {
           </p>
         </div>
       </div>
+    </>
     );
   }
 
   return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <>
+        <Seo
+          title="ThinkUp - Iniciar sesión"
+          description="Accede a ThinkUp con Google, correo y contraseña o enlace mágico."
+          url="https://your-domain.com/login"
+          noIndex={true}
+        />
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="w-full max-w-sm p-8 bg-white rounded-2xl shadow-sm">
         <h1 className="text-2xl font-light text-gray-900 text-center mb-2">
           {usePasswordless ? 'Iniciar sesión' : (isRegister ? 'Crear cuenta' : 'Iniciar sesión')}
@@ -260,6 +276,7 @@ function LoginPage({ onLogin }) {
         )}
         </div>
       </div>
+    </>
   );
 }
 
