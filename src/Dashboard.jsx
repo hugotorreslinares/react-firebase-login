@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getIdeas, addIdea, updateIdea, deleteIdea } from './firebase';
 
+
+
 function Dashboard({ user }) {
   const [ideas, setIdeas] = useState([]);
   const [loadingIdeas, setLoadingIdeas] = useState(true);

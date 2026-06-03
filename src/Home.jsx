@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getPublicIdeas } from './firebase';
+import Idea from './components/Idea';
+
 
 function Home() {
   const [ideas, setIdeas] = useState([]);
@@ -31,15 +33,9 @@ function Home() {
         ) : ideas.length === 0 ? (
           <p className="text-center text-gray-500">No hay ideas públicas aún.</p>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2 text-left">
             {ideas.map((item) => (
-              <div key={item.id} className="bg-white rounded-2xl p-6 shadow-sm">
-                <h3 className="font-medium text-gray-900 text-lg">{item.titulo}</h3>
-                <p className="text-gray-600 mt-2">{item.idea}</p>
-                <p className="text-sm text-gray-400 mt-4">
-                  Por: {item.createdByName}
-                </p>
-              </div>
+              <Idea idea={item} />
             ))}
           </div>
         )}
