@@ -4,15 +4,30 @@ import { getUserIdeas, addIdea, updateIdea, deleteIdea, uploadIdeaImages } from 
 
 
 function Dashboard({ user }) {
+  const categories = [
+    'Ropa y accesorios',
+    'Electrónica usada',
+    'Hogar y decoración',
+    'Muebles',
+    'Deportes y fitness',
+    'Juguetes y juegos',
+    'Libros y entretenimiento',
+    'Herramientas',
+    'Coleccionables',
+    'Accesorios de moda',
+  ];
+
   const [ideas, setIdeas] = useState([]);
   const [loadingIdeas, setLoadingIdeas] = useState(true);
   const [titulo, setTitulo] = useState('');
   const [idea, setIdea] = useState('');
+  const [category, setCategory] = useState('Random');
   const [isPublic, setIsPublic] = useState(true);
   const [savingIdea, setSavingIdea] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [images, setImages] = useState([]);
   const [submitError, setSubmitError] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('Todas');
   const [cardImageIndexes, setCardImageIndexes] = useState({});
 
   const fetchIdeas = useCallback(async () => {
@@ -40,21 +55,23 @@ function Dashboard({ user }) {
     if (!titulo.trim() || !idea.trim()) return;
     setSubmitError('');
     setSavingIdea(true);
+    const selectedCategory = category?.trim() || 'Random';
     try {
       if (editingId) {
-        await updateIdea(editingId, titulo, idea, isPublic);
+        await updateIdea(editingId, titulo, idea, isPublic, selectedCategory);
         if (images.length > 0) {
           await uploadIdeaImages(images, editingId);
         }
         setEditingId(null);
       } else {
-        const newIdeaId = await addIdea(titulo, idea, isPublic, user);
+        const newIdeaId = await addIdea(titulo, idea, isPublic, user, selectedCategory);
         if (images.length > 0) {
           await uploadIdeaImages(images, newIdeaId);
         }
       }
       setTitulo('');
       setIdea('');
+      setCategory('Random');
       setIsPublic(true);
       setImages([]);
       await fetchIdeas();
@@ -69,6 +86,7 @@ function Dashboard({ user }) {
   const handleEdit = (item) => {
     setTitulo(item.titulo);
     setIdea(item.idea);
+    setCategory(item.category || 'Random');
     setIsPublic(item.public || false);
     setEditingId(item.id);
   };
@@ -85,6 +103,17 @@ function Dashboard({ user }) {
     }));
   };
 
+  const filteredIdeas = ideas.filter((item) => {
+    const itemCategory = item.category || 'Random';
+    return categoryFilter === 'Todas' || itemCategory === categoryFilter;
+  });
+
+  const sortedIdeas = [...filteredIdeas].sort((a, b) => {
+    const catA = (a.category || 'Random').localeCompare(b.category || 'Random');
+    if (catA !== 0) return catA;
+    return b.timestamp - a.timestamp;
+  });
+
   const handleDelete = async (id) => {
     if (!confirm('¿Estás seguro de eliminar esta idea?')) return;
     try {
@@ -98,9 +127,7 @@ function Dashboard({ user }) {
   const handleCancel = () => {
     setTitulo('');
     setIdea('');
-    setIsPublic(true);
-    setEditingId(null);
-    setImages([]);
+    setCategory('Random');
   };
 
   return (
@@ -153,6 +180,20 @@ function Dashboard({ user }) {
               required
             />
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-gray-400"
+              >
+                <option value="Random">Random</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">Selecciona la categoría del artículo o deja Random para asignarla por defecto.</p>
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Imágenes opcionales (máx. 3)</label>
               <input
                 type="file"
@@ -204,17 +245,41 @@ function Dashboard({ user }) {
 <div className="">
 
 
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="text-sm font-medium text-gray-700">Filtrar por categoría:</label>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:border-gray-400"
+              >
+                <option value="Todas">Todas</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="text-sm text-gray-500">Ordenado por categoría y fecha</div>
+          </div>
+
           {loadingIdeas ? (
             <p className="text-gray-500">Cargando...</p>
-          ) : ideas.length === 0 ? (
-            <p className="text-gray-500">No hay ideas aún.</p>
+          ) : sortedIdeas.length === 0 ? (
+            <p className="text-gray-500">No hay ideas para esta categoría.</p>
           ) : (
             <div className="space-y-4">
-              {ideas.map((item) => (
+              {sortedIdeas.map((item) => (
                 <div key={item.id} className="border border-gray-200  p-4 bordered">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900 uppercase">{item.titulo}</h3>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <h3 className="font-medium text-gray-900 uppercase">{item.titulo}</h3>
+                        <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                          {item.category || 'Random'}
+                        </span>
+                      </div>
                       {item.imageUrls?.length > 0 && (
                         <div className="mt-4 relative overflow-hidden  border border-gray-200 bg-gray-100">
                           <img

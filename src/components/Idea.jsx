@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, Share2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import LikeDislike from './LikeDislike';
+//import ImageGrader from './ImageGrader'
 import avatarPlaceholder from '../assets/avatar-placeholder.svg';
 import { likeIdea, dislikeIdea } from '../firebase';
 
@@ -72,7 +73,13 @@ const Idea = ({ idea, truncatePreview = false }) => {
                         <Eye size={18} />
                     </button>
                 </div>
-                <h3 className="font-medium text-gray-900 text-lg uppercase">{idea.titulo}</h3>
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="font-medium text-gray-900 text-lg uppercase">{idea.titulo}</h3>
+                  <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                    {idea.category || 'Random'}
+                  </span>
+                </div>
+
                 {idea.imageUrls?.length > 0 && (
                   <div className="mt-4 relative">
                     <div className="relative overflow-hidden  border border-gray-200 bg-gray-100">
@@ -134,6 +141,7 @@ const Idea = ({ idea, truncatePreview = false }) => {
                             <div>
                                 <h2 className="text-2xl font-semibold text-gray-900 uppercase">{idea.titulo}</h2>
                                 <p className="text-sm text-gray-500 mt-2">{idea.public ? '🌐 Idea pública' : '🔒 Idea privada'}</p>
+                                <p className="text-sm text-gray-500 mt-1">Categoría: {idea.category || 'Random'}</p>
                             </div>
                             <button
                                 onClick={closeModal}

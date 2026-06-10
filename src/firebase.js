@@ -51,10 +51,11 @@ export const isEmailLinkSignIn = (link) =>
 
 export const getStoredEmail = () => localStorage.getItem('emailForSignIn');
 
-export const addIdea = async (titulo, idea, isPublic, user) => {
+export const addIdea = async (titulo, idea, isPublic, user, category = 'Random') => {
   const docRef = await addDoc(collection(db, 'ideas'), {
     titulo,
     idea,
+    category: category?.trim() || 'Random',
     public: isPublic,
     createdBy: user.email,
     createdByName: user.displayName || user.email,
@@ -250,10 +251,11 @@ export const getPublicIdeas = async () => {
   }
 };
 
-export const updateIdea = async (id, titulo, idea, isPublic) => {
+export const updateIdea = async (id, titulo, idea, isPublic, category = 'Random') => {
   await updateDoc(doc(db, 'ideas', id), {
     titulo,
     idea,
+    category: category?.trim() || 'Random',
     public: isPublic
   });
 };
