@@ -65,7 +65,7 @@ const Idea = ({ idea, truncatePreview = false }) => {
 
     return (
         <>
-            <div className="bg-white  p-6 shadow-sm text-left relative bordered mb-8">
+            <article className="bg-white  p-6 shadow-sm text-left relative bordered mb-8">
                 <div className="absolute bottom-4 right-4 flex gap-2">
                     <Link
                         to={`/idea/${idea.id}`}
@@ -141,7 +141,7 @@ const Idea = ({ idea, truncatePreview = false }) => {
                 <div className="mt-4 flex items-center gap-4">
                     <LikeDislike onLike={handleLike} onDislike={handleDislike} likes={likes} dislikes={dislikes} />
                 </div>
-            </div>
+            </article>
 
             {isOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-6">
