@@ -151,21 +151,43 @@ const IdeaPage = ({ user }) => {
         );
     }
 
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": idea.titulo,
+        "description": idea.idea.substring(0, 160),
+        "author": {
+            "@type": "Person",
+            "name": idea.createdByName || idea.createdBy
+        },
+        "datePublished": new Date(idea.timestamp).toISOString(),
+        "genre": idea.category || 'Random',
+        "interactionStatistic": [
+            {
+                "@type": "InteractionCounter",
+                "interactionType": "https://schema.org/LikeAction",
+                "userInteractionCount": idea.likes || 0
+            }
+        ]
+    };
+
     return (
         <>
             <Seo
                 title={`ThinkUp - ${idea.titulo}`}
                 description={idea.idea.substring(0, 160)}
                 url={window.location.href}
+                type="article"
+                schema={schema}
             />
-            <div className="min-h-screen bg-gray-50 py-12 px-4">
+            <main className="min-h-screen bg-gray-50 py-12 px-4">
                 <div className="max-w-3xl mx-auto">
                     <Link to="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 transition">
                         <ChevronLeft size={20} />
                         <span>Volver a las ideas</span>
                     </Link>
 
-                    <div className="bg-white border border-gray-200 p-8 rounded-none shadow-sm mb-8">
+                    <article className="bg-white border border-gray-200 p-8 rounded-none shadow-sm mb-8">
                         <div className="flex flex-wrap items-center gap-3 mb-4">
                             <h1 className="text-3xl font-bold text-gray-900 uppercase rounded-none">{idea.titulo}</h1>
                             <span className="bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 rounded-none">
@@ -234,10 +256,10 @@ const IdeaPage = ({ user }) => {
                                 Compartir
                             </button>
                         </div>
-                    </div>
+                    </article>
 
                     {/* Sección de Comentarios */}
-                    <div className="bg-white border border-gray-200 p-8 rounded-none shadow-sm">
+                    <section className="bg-white border border-gray-200 p-8 rounded-none shadow-sm">
                         <h2 className="text-xl font-bold text-gray-900 mb-8 uppercase flex items-center gap-2">
                             <MessageSquare size={20} />
                             Comentarios ({comments.length})
@@ -324,9 +346,9 @@ const IdeaPage = ({ user }) => {
                                 </button>
                             </div>
                         )}
-                    </div>
+                    </section>
                 </div>
-            </div>
+            </main>
         </>
     );
 };
