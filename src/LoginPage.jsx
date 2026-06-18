@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   signInWithGoogle, 
   registerWithEmail, 
@@ -12,8 +12,10 @@ import {
 } from './firebase';
 import Seo from './Seo';
 
-function LoginPage({ onLogin }) {
+function LoginPage({ onLogin, user }) {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isRegister, setIsRegister] = useState(false);
   const [usePasswordless, setUsePasswordless] = useState(false);
   const [email, setEmail] = useState('');
@@ -23,6 +25,12 @@ function LoginPage({ onLogin }) {
   const [emailSent, setEmailSent] = useState(false);
 
   useEffect(() => {
+    if (user) {
+      const from = location.state?.from || '/dashboard';
+      navigate(from, { replace: true });
+      return;
+    }
+
     const checkEmailLink = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const mode = urlParams.get('mode');
@@ -58,6 +66,9 @@ function LoginPage({ onLogin }) {
           console.log('Sign in successful:', result.user);
           onLogin(result.user);
           localStorage.removeItem('emailForSignIn');
+
+          const from = location.state?.from || '/dashboard';
+          navigate(from, { replace: true });
         } catch (err) {
           console.error('Sign in error:', err);
           setError('El enlace ha expirado o ya fue usado: ' + err.message);
@@ -79,6 +90,8 @@ function LoginPage({ onLogin }) {
       const result = await signInWithLink(email, link);
       onLogin(result.user);
       localStorage.removeItem('emailForSignIn');
+      const from = location.state?.from || '/dashboard';
+      navigate(from, { replace: true });
     } catch (err) {
       setError('El enlace ha expirado o ya fue usado');
       console.error(err);
@@ -93,6 +106,8 @@ function LoginPage({ onLogin }) {
       setLoading(true);
       const result = await signInWithGoogle();
       onLogin(result.user);
+      const from = location.state?.from || '/dashboard';
+      navigate(from, { replace: true });
     } catch (err) {
       setError('Error al iniciar sesión con Google');
       console.error(err);
@@ -115,9 +130,13 @@ function LoginPage({ onLogin }) {
       } else if (isRegister) {
         const result = await registerWithEmail(email, password);
         onLogin(result.user);
+        const from = location.state?.from || '/dashboard';
+        navigate(from, { replace: true });
       } else {
         const result = await loginWithEmail(email, password);
         onLogin(result.user);
+        const from = location.state?.from || '/dashboard';
+        navigate(from, { replace: true });
       }
     } catch (err) {
       if (err.code === 'auth/email-already-in-use') {

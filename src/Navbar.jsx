@@ -44,14 +44,14 @@ function Navbar({ user }) {
           {user ? (
             <button
               onClick={handleLogout}
-              className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+              className="text-sm text-gray-500 hover:text-gray-900 transition-colors rounded-none"
             >
               Logout
             </button>
           ) : (
             <Link
               to="/login"
-              className="text-sm bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+              className="text-sm bg-gray-900 text-white px-4 py-2 rounded-none hover:bg-gray-800 transition-colors uppercase"
             >
               Login
             </Link>

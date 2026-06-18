@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 import Home from './Home';
 import LoginPage from './LoginPage';
 import Dashboard from './Dashboard';
+import IdeaPage from './IdeaPage';
 
 function ProtectedRoute({ user, children }) {
   if (!user) {
@@ -41,7 +42,7 @@ function AppContent() {
         <Route path="/" element={<Home />} />
         <Route 
           path="/login" 
-          element={user ? <Navigate to="/dashboard" replace /> : <LoginPage onLogin={setUser} />} 
+          element={<LoginPage onLogin={setUser} user={user} />}
         />
         <Route 
           path="/dashboard" 
@@ -51,6 +52,7 @@ function AppContent() {
             </ProtectedRoute>
           } 
         />
+        <Route path="/idea/:id" element={<IdeaPage user={user} />} />
       </Routes>
     </>
   );

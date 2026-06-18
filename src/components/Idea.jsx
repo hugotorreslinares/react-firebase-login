@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Eye, Share2, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Eye, Share2, X, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import LikeDislike from './LikeDislike';
 //import ImageGrader from './ImageGrader'
 import avatarPlaceholder from '../assets/avatar-placeholder.svg';
 import { likeIdea, dislikeIdea } from '../firebase';
 
 const Idea = ({ idea, truncatePreview = false }) => {
+    const navigate = useNavigate();
     const [likes, setLikes] = useState(idea.likes || 0);
     const [dislikes, setDislikes] = useState(idea.dislikes || 0);
     const [isOpen, setIsOpen] = useState(false);
@@ -64,11 +66,18 @@ const Idea = ({ idea, truncatePreview = false }) => {
     return (
         <>
             <div className="bg-white  p-6 shadow-sm text-left relative bordered mb-8">
-                <div className="absolute bottom-4 right-4">
+                <div className="absolute bottom-4 right-4 flex gap-2">
+                    <Link
+                        to={`/idea/${idea.id}`}
+                        className="inline-flex items-center justify-center bg-gray-100 p-2 text-gray-700 hover:bg-gray-200 transition rounded-none"
+                        title="Ver detalles y comentarios"
+                    >
+                        <MessageSquare size={18} />
+                    </Link>
                     <button
                         onClick={openModal}
-                        className="inline-flex items-center justify-center  bg-gray-100 p-2 text-gray-700 hover:bg-gray-200 transition"
-                        title="Ver detalles"
+                        className="inline-flex items-center justify-center  bg-gray-100 p-2 text-gray-700 hover:bg-gray-200 transition rounded-none"
+                        title="Vista rápida"
                     >
                         <Eye size={18} />
                     </button>
@@ -260,16 +269,23 @@ const Idea = ({ idea, truncatePreview = false }) => {
                         </div>
 
                         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <Link
+                                to={`/idea/${idea.id}`}
+                                className="inline-flex items-center justify-center gap-2 bg-gray-100 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition rounded-none uppercase"
+                            >
+                                <MessageSquare size={18} />
+                                Comentarios
+                            </Link>
                             <button
                                 onClick={handleShare}
-                                className="inline-flex items-center justify-center gap-2  bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-800 transition"
+                                className="inline-flex items-center justify-center gap-2  bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-gray-800 transition rounded-none uppercase"
                             >
                                 <Share2 size={18} />
                                 Compartir
                             </button>
                             <button
                                 onClick={closeModal}
-                                className=" border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
+                                className=" border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition rounded-none uppercase"
                             >
                                 Cerrar
                             </button>
