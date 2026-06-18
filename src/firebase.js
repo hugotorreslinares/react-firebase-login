@@ -10,7 +10,7 @@ import {
   signInWithEmailLink,
   isSignInWithEmailLink
 } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, increment, runTransaction, arrayUnion, arrayRemove, query, where } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, increment, runTransaction, arrayUnion, arrayRemove, query, where, orderBy, onSnapshot } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY?.trim(),
@@ -262,4 +262,36 @@ export const updateIdea = async (id, titulo, idea, isPublic, category = 'Random'
 
 export const deleteIdea = async (id) => {
   await deleteDoc(doc(db, 'ideas', id));
+};
+
+export const getIdea = async (id) => {
+  const docSnap = await getDoc(doc(db, 'ideas', id));
+  if (docSnap.exists()) {
+    return { id: docSnap.id, ...docSnap.data() };
+  }
+  return null;
+};
+
+export const addComment = async (ideaId, user, text) => {
+  const docRef = await addDoc(collection(db, 'ideas', ideaId, 'comments'), {
+    text,
+    createdBy: user.email,
+    createdByName: user.displayName || user.email,
+    createdByAvatar: user.photoURL || null,
+    timestamp: Date.now(),
+  });
+  return docRef.id;
+};
+
+export const getComments = async (ideaId) => {
+  const q = query(
+    collection(db, 'ideas', ideaId, 'comments'),
+    orderBy('timestamp', 'asc')
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const deleteComment = async (ideaId, commentId) => {
+  await deleteDoc(doc(db, 'ideas', ideaId, 'comments', commentId));
 };
