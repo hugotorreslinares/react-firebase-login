@@ -3,7 +3,7 @@ import { ThumbsUp, ThumbsDown } from 'lucide-react';
 
 const LikeDislike = ({ onLike, onDislike, likes = 0, dislikes = 0 }) => {
   return (
-    <div className="flex gap-4 items-center border-bottom p-0">
+    <div className="flex gap-4 items-center p-0">
       <button
         onClick={onLike}
         className="flex items-center gap-2 px-4 py-2 rounded-none hover:bg-green-100 transition"

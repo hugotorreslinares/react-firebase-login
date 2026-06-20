@@ -59,8 +59,8 @@ function Home() {
         schema={schema}
       />
       <div className="min-h-screen  py-12 ">
-        <div className="max6xl mx-auto px-0">
-          <header className="bg-white shadow-gray-100 mb-5 py-1 border-bottom">
+        <div className="max-w-6xl mx-auto px-0">
+          <header className="bg-white shadow-gray-100 mb-5 py-1">
             <div className="text-center mt-8 mb-8">
               <img
                 src={logo}

@@ -65,7 +65,7 @@ const Idea = ({ idea, truncatePreview = false }) => {
 
     return (
         <>
-            <article className="bg-white  p-6 shadow-sm text-left relative bordered mb-8">
+            <article className="bg-white  p-6 shadow-sm text-left relative mb-8">
                 <div className="absolute bottom-4 right-4 flex gap-2">
                     <Link
                         to={`/idea/${idea.id}`}

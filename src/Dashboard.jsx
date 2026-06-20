@@ -141,7 +141,7 @@ function Dashboard({ user }) {
         </p>
         
         {user.photoURL && (
-          <div className="mb-8 pb-8border-bottom" >
+          <div className="mb-8 pb-8" >
             <img 
               src={user.photoURL} 
               alt="Profile" 
@@ -151,7 +151,7 @@ function Dashboard({ user }) {
           </div>
         )}
 
-        <div className="bg-white p-8 shadow-sm grid gap-4 grid-cols-1 lg:grid-cols-2 bordered">
+        <div className="bg-white p-8 shadow-sm grid gap-4 grid-cols-1 lg:grid-cols-2">
           
           <div className="">
             <h2 className="text-xl font-medium text-gray-900 mb-4">
@@ -271,7 +271,7 @@ function Dashboard({ user }) {
           ) : (
             <div className="space-y-4">
               {sortedIdeas.map((item) => (
-                <div key={item.id} className="border border-gray-200  p-4 bordered">
+                <div key={item.id} className="border border-gray-200  p-4">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 flex-wrap">
@@ -336,7 +336,7 @@ function Dashboard({ user }) {
                         {item.public ? '🌐 Pública' : '🔒 Privada'} • {new Date(item.timestamp).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="flex gap-2 ml-4 border-bottom">
+                    <div className="flex gap-2 ml-4">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-blue-600 hover:text-blue-800 text-sm"

@@ -12,7 +12,7 @@ function Navbar({ user }) {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white border-b border-gray-100 z-50 border-bottom">
+    <nav className="fixed top-0 left-0 right-0 bg-white border-b border-gray-100 z-50">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <Link
           to="/"

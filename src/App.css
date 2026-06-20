@@ -12,18 +12,6 @@
   transition: filter 300ms;
 }
 
-.bordered {
-  border: thick solid black;
-}
-
-.border-bottom {
-  border-bottom: thick solid black;
-}
-
-.border-top {
-  border-top: thick solid black;
-}
-
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
