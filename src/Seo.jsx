@@ -4,7 +4,7 @@ const defaultMeta = {
   title: 'ThinkUp - Plataforma colaborativa de ideas',
   description: 'ThinkUp es una plataforma para compartir, votar y descubrir ideas públicas con inicio de sesión seguro.',
   url: 'https://cool-ideas-beta.vercel.app/',
-  image: 'https://cool-ideas-beta.vercel.app/og-image.png', // Fallback image if we had one
+  image: null, // No default image yet to avoid 404s
 };
 
 function setMeta(name, value, attr = 'name') {
