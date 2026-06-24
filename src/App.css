@@ -13,15 +13,15 @@
 }
 
 .bordered {
-  border: thick solid black;
+  border-left: thin dashed #cccccc;
 }
 
 .border-bottom {
-  border-bottom: thick solid black;
+  border-bottom: none;
 }
 
 .border-top {
-  border-top: thick solid black;
+  border-top: none;
 }
 
 .logo:hover {
