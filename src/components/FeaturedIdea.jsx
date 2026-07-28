@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Share2, MessageSquare } from 'lucide-react';
+import { Share2, MessageSquare, Flame } from 'lucide-react';
 import LikeDislike from './LikeDislike';
 import { likeIdea, dislikeIdea } from '../firebase';
 import homeTexts from '../locales/home.json';
@@ -60,65 +60,63 @@ const FeaturedIdea = ({ idea }) => {
   };
 
   return (
-    <div className="bg-transparent text-gray-900 py-16 px-4 md:px-12 text-center relative border-t border-b border-black mb-16 rounded-none max-w-4xl mx-auto">
-      {/* Editorial Badge */}
-      <div className="text-xs font-bold uppercase tracking-[0.25em] text-gray-500 mb-6">
-        — {t.badge} —
+    <div className="bg-gray-900 text-white p-8 md:p-12 shadow-md text-left relative border border-gray-800 mb-12 rounded-none transition-all duration-300">
+      {/* Decorative Badge */}
+      <div className="absolute top-4 right-4 bg-amber-500 text-gray-900 px-3 py-1 text-xs font-bold uppercase tracking-wider flex items-center gap-1 rounded-none">
+        <Flame size={14} className="animate-pulse" />
+        {t.badge}
       </div>
 
-      <div className="space-y-6">
-        {/* Category Label */}
-        <div className="text-xs font-semibold uppercase tracking-[0.2em] text-black">
-          {idea.category || t.defaultCategory}
+      <div className="max-w-4xl">
+        <div className="flex flex-wrap items-center gap-3 mb-4">
+          <span className="bg-gray-800 text-amber-400 px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-none border border-gray-700">
+            {idea.category || t.defaultCategory}
+          </span>
         </div>
 
-        {/* Title */}
-        <h2 className="text-4xl md:text-5xl font-light tracking-[0.05em] text-black uppercase leading-tight font-serif">
+        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white uppercase mb-4 leading-tight">
           {idea.titulo}
         </h2>
 
-        {/* Description / Body text */}
-        <p className="text-gray-600 text-lg md:text-xl font-light max-w-3xl mx-auto leading-relaxed tracking-wide font-sans py-4">
+        <p className="text-gray-300 text-lg mb-6 line-clamp-3 md:line-clamp-none leading-relaxed">
           {idea.idea}
         </p>
 
-        {/* Author / Metadata */}
-        <div className="text-xs font-semibold uppercase tracking-[0.15em] text-gray-500 pt-2 pb-6">
-          {t.by} <span className="text-black font-bold">{idea.createdByName || idea.createdBy}</span>
-        </div>
-
-        {/* High-end minimalist interaction controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8 border-t border-gray-100">
-
-          {/* Custom minimal LikeDislike container */}
-          <div className="border border-black px-2 py-1">
-            <LikeDislike
-              onLike={handleLike}
-              onDislike={handleDislike}
-              likes={likes}
-              dislikes={dislikes}
-            />
+        <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-gray-800">
+          <div className="text-sm text-gray-400">
+            {t.by} <span className="text-gray-200 font-medium">{idea.createdByName || idea.createdBy}</span>
           </div>
 
-          {/* Action buttons with generous tracking and thin borders */}
-          <div className="flex gap-4">
-            <Link
-              to={`/idea/${idea.id}`}
-              className="inline-flex items-center gap-2 border border-black hover:bg-black hover:text-white text-black px-6 py-3 text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 rounded-none"
-              title={t.comments}
-            >
-              <MessageSquare size={14} />
-              <span>{t.comments}</span>
-            </Link>
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Custom styled LikeDislike for dark background */}
+            <div className="flex gap-2 items-center bg-gray-800 p-1 border border-gray-700">
+              <LikeDislike
+                onLike={handleLike}
+                onDislike={handleDislike}
+                likes={likes}
+                dislikes={dislikes}
+              />
+            </div>
 
-            <button
-              onClick={handleShare}
-              className="inline-flex items-center gap-2 border border-black hover:bg-black hover:text-white text-black px-6 py-3 text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 rounded-none"
-              title={t.share}
-            >
-              <Share2 size={14} />
-              <span>{t.share}</span>
-            </button>
+            <div className="flex gap-2">
+              <Link
+                to={`/idea/${idea.id}`}
+                className="inline-flex items-center gap-2 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-white px-4 py-2 text-sm font-semibold uppercase tracking-wider transition rounded-none"
+                title={t.comments}
+              >
+                <MessageSquare size={16} />
+                <span className="hidden sm:inline">{t.comments}</span>
+              </Link>
+
+              <button
+                onClick={handleShare}
+                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-gray-900 px-4 py-2 text-sm font-bold uppercase tracking-wider transition rounded-none"
+                title={t.share}
+              >
+                <Share2 size={16} />
+                <span className="hidden sm:inline">{t.share}</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
