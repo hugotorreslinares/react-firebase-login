@@ -103,16 +103,13 @@ function Home() {
                 </div>
               )}
 
-              {!loading && ideas.length > 0 && (
-                <div className="mt-8 flex justify-center">
-                  <Link
-                    to="/dashboard"
-                    className="inline-flex items-center justify-center bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 rounded-none uppercase"
-                  >
-                    {t.hero.addIdeaBtn}
-                  </Link>
-                </div>
-              )}
+            <div className="flex justify-center mb-8">
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center justify-center  bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 rounded-none uppercase"
+              >
+                Añadir nueva idea
+              </Link>
             </div>
 
             {/* Featured Idea Banner inside Hero */}
