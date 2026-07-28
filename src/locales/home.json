@@ -1,0 +1,29 @@
+{
+  "seo": {
+    "title": "ThinkUp — Plataforma Colaborativa de Ideas",
+    "description": "ThinkUp is an editorial collaborative platform to share, vote and discover premium public ideas.",
+    "schemaDescription": "Una plataforma minimalista de votación de ideas."
+  },
+  "hero": {
+    "logoAlt": "ThinkUp Logo",
+    "title": "Una plataforma colaborativa de votación de ideas.",
+    "subtitle": "Descubra ideas públicas y comparta su visión.",
+    "addIdeaBtn": "Añadir nueva idea",
+    "noIdeasMessage": "No se han encontrado ideas públicas."
+  },
+  "featured": {
+    "badge": "Idea Destacada",
+    "by": "Por",
+    "comments": "Comentarios",
+    "share": "Compartir",
+    "defaultCategory": "Général",
+    "shareAlertCopied": "Copiado al portapapeles.",
+    "shareAlertFailed": "Error al copiar."
+  },
+  "feed": {
+    "loading": "Cargando...",
+    "endOfIdeas": "Fin de la selección.",
+    "reachedEnd": "Fin de la lista.",
+    "exploreHeader": "Explorar la colección"
+  }
+}
