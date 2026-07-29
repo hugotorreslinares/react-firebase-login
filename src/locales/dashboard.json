@@ -1,0 +1,47 @@
+{
+  "seo": {
+    "title": "Mis Ideas — ThinkUp",
+    "description": "Gestiona y comparte tus ideas premium."
+  },
+  "header": {
+    "title": "Mis Ideas",
+    "welcome": "Bienvenido,",
+    "profileAlt": "Foto de perfil"
+  },
+  "stats": {
+    "total": "Total de ideas",
+    "public": "Públicas",
+    "private": "Privadas"
+  },
+  "form": {
+    "newTitle": "Nueva Idea",
+    "editTitle": "Editar Idea",
+    "titlePlaceholder": "Título de la idea",
+    "ideaPlaceholder": "Escribe tu idea aquí...",
+    "categoryLabel": "Categoría",
+    "categoryDefault": "Random",
+    "categoryHelp": "Selecciona la categoría del artículo o deja Random para asignarla por defecto.",
+    "imagesLabel": "Imágenes opcionales (máx. 3)",
+    "imagesHelp": "Puedes subir hasta tres imágenes para la idea, no es obligatorio.",
+    "publicLabel": "Hacer esta idea pública",
+    "publicActive": "Idea Pública (🌐)",
+    "publicInactive": "Idea Privada (🔒)",
+    "btnSave": "Guardar Idea",
+    "btnUpdate": "Actualizar Idea",
+    "btnCancel": "Cancelar",
+    "btnSaving": "Guardando...",
+    "errorHeader": "Error al guardar la idea"
+  },
+  "feed": {
+    "filterLabel": "Filtrar por categoría:",
+    "filterAll": "Todas",
+    "sortingHelp": "Ordenado por categoría y fecha",
+    "loading": "Cargando ideas...",
+    "empty": "No hay ideas para esta categoría.",
+    "btnEdit": "Editar",
+    "btnDelete": "Eliminar",
+    "confirmDelete": "¿Estás seguro de eliminar esta idea?",
+    "publicBadge": "🌐 Pública",
+    "privateBadge": "🔒 Privada"
+  }
+}
