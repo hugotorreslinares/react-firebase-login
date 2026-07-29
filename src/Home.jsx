@@ -73,30 +73,30 @@ function Home() {
         url="https://cool-ideas-beta.vercel.app/"
         schema={schema}
       />
-      <div className="min-h-screen py-12">
-        <div className="max-w-6xl mx-auto px-4">
+      <div className="min-h-screen py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
 
-          {/* Hero Section */}
-          <header className="mb-12">
-            <div className="bg-white border-b border-gray-100 pb-12 pt-8 text-center">
+          {/* Chanel-Inspired Ultra-Minimalist Header & Hero */}
+          <header className="mb-16">
+            <div className="bg-transparent pb-12 pt-4 text-center">
               <img
                 src={logo}
                 alt={t.hero.logoAlt}
-                className="mx-auto h-24 w-24 rounded-none shadow-lg transition-transform duration-300 hover:-rotate-6"
+                className="mx-auto h-20 w-20 rounded-none transition-transform duration-500 hover:scale-105"
               />
-              <h1 className="mt-6 text-4xl font-black text-gray-900 uppercase tracking-tight">
+              <h1 className="mt-8 text-3xl md:text-5xl font-light text-black uppercase tracking-[0.1em] font-serif max-w-4xl mx-auto leading-tight">
                 {t.hero.title}
               </h1>
-              <p className="mt-3 text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="mt-4 text-sm md:text-base text-gray-500 uppercase tracking-[0.2em] font-light max-w-xl mx-auto">
                 {t.hero.subtitle}
               </p>
 
               {!loading && ideas.length === 0 && (
-                <div className="mt-8">
-                  <p className="text-gray-500 font-medium mb-4 uppercase">{t.hero.noIdeasMessage}</p>
+                <div className="mt-12">
+                  <p className="text-xs text-gray-400 font-bold tracking-[0.2em] mb-6 uppercase">{t.hero.noIdeasMessage}</p>
                   <Link
                     to="/dashboard"
-                    className="inline-flex items-center justify-center bg-gray-900 px-8 py-4 text-base font-bold text-white transition hover:bg-gray-800 rounded-none uppercase tracking-wider"
+                    className="inline-flex items-center justify-center border border-black text-black hover:bg-black hover:text-white px-8 py-4 text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 rounded-none"
                   >
                     {t.hero.addIdeaBtn}
                   </Link>
@@ -104,10 +104,10 @@ function Home() {
               )}
 
               {!loading && ideas.length > 0 && (
-                <div className="mt-8 flex justify-center">
+                <div className="mt-10 flex justify-center">
                   <Link
                     to="/dashboard"
-                    className="inline-flex items-center justify-center bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 rounded-none uppercase"
+                    className="inline-flex items-center justify-center border border-black text-black hover:bg-black hover:text-white px-8 py-3 text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 rounded-none"
                   >
                     {t.hero.addIdeaBtn}
                   </Link>
@@ -117,7 +117,7 @@ function Home() {
 
             {/* Featured Idea Banner inside Hero */}
             {!loading && featuredIdea && (
-              <div className="mt-12">
+              <div className="mt-8">
                 <FeaturedIdea idea={featuredIdea} />
               </div>
             )}
@@ -125,19 +125,19 @@ function Home() {
 
           <main>
             {loading ? (
-              <p className="text-center text-gray-500 uppercase tracking-wider">{t.feed.loading}</p>
+              <p className="text-center text-xs text-gray-500 uppercase tracking-[0.2em] py-12">{t.feed.loading}</p>
             ) : filteredIdeas.length === 0 && featuredIdea ? (
-              <div className="text-center text-gray-400 mt-8 mb-12">
-                <p className="uppercase font-semibold tracking-wider">{t.feed.endOfIdeas}</p>
+              <div className="text-center text-gray-400 mt-12 mb-16">
+                <p className="text-xs uppercase tracking-[0.2em] font-light">{t.feed.endOfIdeas}</p>
               </div>
             ) : filteredIdeas.length === 0 ? (
               null // Fallback already handled inside header above
             ) : (
               <>
-                <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wider mb-6 border-b pb-2">
+                <h3 className="text-xs font-bold text-black uppercase tracking-[0.25em] mb-8 border-b border-black pb-4">
                   {t.feed.exploreHeader}
                 </h3>
-                <section className="grid gap-4 md:grid-cols-3 sm:grid-cols-1 text-left" aria-label="Listado de ideas">
+                <section className="grid gap-8 md:grid-cols-3 sm:grid-cols-1 text-left" aria-label="Listado de ideas">
                   {filteredIdeas.slice(0, visibleCount).map((item, index) => {
                     const isNewBatch = index >= 6;
                     const itemInBatchIndex = isNewBatch ? (index - 6) % 3 : -1;
@@ -163,8 +163,8 @@ function Home() {
                   })}
                 </section>
                 {visibleCount >= filteredIdeas.length && filteredIdeas.length > 0 && (
-                  <div className="mt-12 mb-20 text-center">
-                    <p className="text-gray-400 font-medium uppercase animate-bounce-custom">
+                  <div className="mt-16 mb-24 text-center">
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-[0.2em] animate-bounce-custom">
                       {t.feed.reachedEnd}
                     </p>
                   </div>
