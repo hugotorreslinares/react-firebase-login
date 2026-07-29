@@ -141,7 +141,7 @@ const Idea = ({ idea, truncatePreview = false }) => {
                 <div className="mt-4 flex items-center gap-4">
                     <LikeDislike onLike={handleLike} onDislike={handleDislike} likes={likes} dislikes={dislikes} />
                 </div>
-            </div>
+            </article>
 
             {isOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-6">
